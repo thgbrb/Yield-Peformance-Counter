@@ -9,6 +9,7 @@
     <None Remove=".gitignore" />
     <None Remove="LICENSE" />
     <None Remove="README.md" />
+    <None Remove="YieldPeformanceRunning.gif" />
   </ItemGroup>
 
   <ItemGroup>
