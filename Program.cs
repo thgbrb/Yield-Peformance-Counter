@@ -18,17 +18,19 @@ namespace YieldPeformance
         /// Numbers range
         /// </summary>
         static IEnumerable<int> Range = Enumerable.Range(1, 999999999);
+        static double InitialMemory = 0;
+        static double EndMemory = 0;
 
         static void Main(string[] args)
         {
-            Init("With Yield");
-            Count(EvenNumbersWithYield(Range));
-            // EvenNumbersWithYield(range).ToList().ForEach(Print);
-            Finish();
-
             Init("Without Yield");
             Count(EvenNumbersWithoutYield(Range));
             // EvenNumbersWithoutYield(range).ToList().ForEach(Print);
+            Finish();
+
+            Init("With Yield");
+            Count(EvenNumbersWithYield(Range));
+            // EvenNumbersWithYield(range).ToList().ForEach(Print);
             Finish();
 
             ReadLine();
@@ -105,12 +107,10 @@ namespace YieldPeformance
 
              c.Start();
 
+             InitialMemory = Process.GetCurrentProcess().VirtualMemorySize64;
+
              WriteLine("Initial Memory:    {0}",
-                 ByteSize.FromBytes(
-                    Process
-                    .GetCurrentProcess()
-                    .VirtualMemorySize64)
-                    .ToString());
+                 ByteSize.FromBytes(InitialMemory).ToString("#.#### MB"));
          };
 
         /// <summary>
@@ -118,32 +118,25 @@ namespace YieldPeformance
         /// </summary>
         static Action Finish = () =>
         {
-            c.Stop();
+            c.Stop();            
             WriteLine();
 
+            EndMemory = Process.GetCurrentProcess().VirtualMemorySize64;
+
             WriteLine("End Memory:        {0}",
-                ByteSize.FromBytes(
-                   Process
-                   .GetCurrentProcess()
-                   .VirtualMemorySize64)
-                   .ToString());
+                ByteSize.FromBytes(EndMemory).ToString("#.#### MB"));
 
-            WriteLine("Peak Memory:       {0}",
-                ByteSize.FromBytes(
-                   Process
-                   .GetCurrentProcess()
-                   .PeakVirtualMemorySize64)
-                   .ToString());
-
-            WriteLine("UserProcessorTime: {0}",
-                Process
-                .GetCurrentProcess()
-                .UserProcessorTime);
+            WriteLine("Memory diff:       {0} (End memory - Initial Memory)",
+                ByteSize.FromBytes(EndMemory - InitialMemory).ToString("#.#### MB"));
 
             WriteLine("Elapsed:           {0}",
                 c.Elapsed);
 
             CallGC();
+
+            InitialMemory = 0;
+            EndMemory = 0;
+            c.Reset();
 
             WriteLine("---------------");
         };
