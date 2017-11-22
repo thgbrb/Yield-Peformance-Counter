@@ -103,11 +103,10 @@ namespace YieldPeformance
         static Action<string> Init = s =>
          {
              WriteLine(s);
-             WriteLine("---------");
-
-             c.Start();
+             WriteLine("---------");             
 
              InitialMemory = Process.GetCurrentProcess().VirtualMemorySize64;
+             c.Start();
 
              WriteLine("Initial Memory:    {0}",
                  ByteSize.FromBytes(InitialMemory).ToString("#.#### MB"));
@@ -118,10 +117,9 @@ namespace YieldPeformance
         /// </summary>
         static Action Finish = () =>
         {
-            c.Stop();            
+            c.Stop();                        
+            EndMemory = Process.GetCurrentProcess().VirtualMemorySize64;WriteLine();
             WriteLine();
-
-            EndMemory = Process.GetCurrentProcess().VirtualMemorySize64;
 
             WriteLine("End Memory:        {0}",
                 ByteSize.FromBytes(EndMemory).ToString("#.#### MB"));
