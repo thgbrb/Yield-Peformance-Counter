@@ -10,33 +10,35 @@ namespace YieldPeformance
 {
     class Program
     {
-        static Stopwatch c { get; set; } = new Stopwatch();
+        /// <summary>
+        /// Stopwatch object
+        /// </summary>
+        static Stopwatch c = new Stopwatch();
+        /// <summary>
+        /// Numbers range
+        /// </summary>
+        static IEnumerable<int> Range = Enumerable.Range(1, 999999999);
 
         static void Main(string[] args)
         {
-            var range = Enumerable.Range(1, 999999999);
-
             Init("With Yield");
-
-            Count(EvenNumbersWithYield(range));
-                // EvenNumbersWithYield(range)
-                // .ToList()
-                // .ForEach(Print);
-
+            Count(EvenNumbersWithYield(Range));
+            // EvenNumbersWithYield(range).ToList().ForEach(Print);
             Finish();
 
             Init("Without Yield");
-
-            Count(EvenNumbersWithoutYield(range));
-                // EvenNumbersWithoutYield(range);
-                // .ToList()
-                // .ForEach(Print);
-
+            Count(EvenNumbersWithoutYield(Range));
+            // EvenNumbersWithoutYield(range).ToList().ForEach(Print);
             Finish();
 
             ReadLine();
         }
 
+        /// <summary>
+        /// Filter list with Even numbers yielding return
+        /// </summary>
+        /// <param name="numbers">Numbers list</param>
+        /// <returns>IEnumerable of Even numbers</returns>
         static IEnumerable<int> EvenNumbersWithYield(IEnumerable<int> numbers)
         {
             foreach (var n in numbers)
@@ -44,6 +46,11 @@ namespace YieldPeformance
                     yield return n;
         }
 
+        /// <summary>
+        /// Filter list with Even numbers using a new collection 
+        /// </summary>
+        /// <param name="numbers">Numbers list</param>
+        /// <returns>IEnumerable of Even numbers</returns>
         static IEnumerable<int> EvenNumbersWithoutYield(IEnumerable<int> numbers)
         {
             var result = new Collection<int>();
@@ -55,8 +62,14 @@ namespace YieldPeformance
             return result;
         }
 
+        /// <summary>
+        /// Even number predicate
+        /// </summary>
         static Func<int, bool> EvenPredicate = n => n % 2 == 0;
 
+        /// <summary>
+        /// Force GC to clean all objects
+        /// </summary>
         static Action CallGC = () =>
         {
             GC.Collect(0, GCCollectionMode.Forced, true);
@@ -64,18 +77,27 @@ namespace YieldPeformance
             GC.Collect(2, GCCollectionMode.Forced, true);
         };
 
+        /// <summary>
+        /// Print actual calculated number
+        /// </summary>
         static Action<int> Print = i =>
         {
             WriteLine("Calculating: {0}", i);
             SetCursorPosition(0, CursorTop - 1);
         };
 
+        /// <summary>
+        /// Print total elements count of list
+        /// </summary>
         static Action<IEnumerable<int>> Count = i =>
         {
             WriteLine("Total of Elements: {0}", i.Count());
             SetCursorPosition(0, CursorTop - 1);
         };
 
+        /// <summary>
+        /// Initial Action: Start stopwatch and print initial memory
+        /// </summary>
         static Action<string> Init = s =>
          {
              WriteLine(s);
@@ -91,6 +113,9 @@ namespace YieldPeformance
                     .ToString());
          };
 
+        /// <summary>
+        /// Finish Action: Stop stopwatch, Print counters and Call forced GC
+        /// </summary>
         static Action Finish = () =>
         {
             c.Stop();
